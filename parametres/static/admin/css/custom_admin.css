@@ -1,0 +1,21 @@
+/* Force l'affichage du conteneur de téléphone */
+.iti {
+    display: block !important;
+    width: 100%;
+}
+
+/* Style spécifique pour que la liste des pays (dont Haïti) soit visible */
+.iti__country-list {
+    z-index: 9999 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+}
+
+/* Ajustement du champ texte de l'admin */
+.vTextField.iti__tel-input {
+    padding-left: 52px !important; /* Espace pour le drapeau */
+    height: 35px;
+    width: 100% !important;
+    box-sizing: border-box;
+}

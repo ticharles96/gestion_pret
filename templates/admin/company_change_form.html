@@ -1,0 +1,13 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+    {% if original.pk %}
+    <li>
+        {# Lien relatif simple qui s'ajoute à l'URL actuelle #}
+        <a href="pdf/" class="historylink" style="background-color: #417690; color: white;">
+            🖨️ Télécharger PDF
+        </a>
+    </li>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

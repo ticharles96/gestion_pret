@@ -1,0 +1,38 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+<div id="content-main">
+    <div style="background: white; padding: 20px; border: 1px solid #ccc; margin-bottom: 20px; border-radius: 4px;">
+        <h2 style="margin-top: 0;">Répartition des Clients par Agent</h2>
+        <div style="height: 300px;">
+            <canvas id="mainChart"></canvas>
+        </div>
+    </div>
+
+    {{ block.super }}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const rawData = {{ chart_data|safe }};
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: rawData.labels,
+                datasets: [{
+                    label: 'Nombre de Clients',
+                    data: rawData.data,
+                    backgroundColor: '#417690'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    });
+</script>
+{% endblock %}

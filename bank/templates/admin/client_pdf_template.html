@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: letter portrait; margin: 0.8cm; }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            color: #333;
+            line-height: 1.5; /* Interligne aéré comme demandé précédemment */
+        }
+
+        /* En-tête Institutionnel */
+        .header-table { width: 100%; border-bottom: 2pt solid #2c3e50; margin-bottom: 10px; }
+        .inst-name h1 { margin: 0; font-size: 18pt; color: #2c3e50; text-transform: uppercase; }
+        .qr-code-img { width: 75px; height: 75px; border: 0.5pt solid #ddd; }
+
+        /* Titre de la fiche */
+        .fiche-title {
+            text-align: center; background-color: #2c3e50; color: white;
+            padding: 8px; font-weight: bold; margin-bottom: 12px;
+            text-transform: uppercase; border-radius: 4px;
+        }
+
+        /* Sections stylisées */
+        .section-header {
+            background-color: #f2f2f2; border-left: 4pt solid #447e9b;
+            padding: 5px 10px; font-weight: bold; margin-top: 15px;
+            text-transform: uppercase; font-size: 9pt; color: #2c3e50;
+        }
+
+        .data-table { width: 100%; margin-top: 5px; border-collapse: collapse; }
+        .data-table td { padding: 6px; border: 0.5pt solid #eee; }
+        .label { font-weight: bold; color: #555; width: 30%; background-color: #fafafa; }
+        .value { color: #000; font-weight: normal; }
+        .finances { font-weight: bold; color: #1a5276; }
+
+        /* Badges de statut */
+        .status-badge { padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; font-size: 8pt; }
+        .valide { background-color: #27ae60; }
+        .bloque { background-color: #e74c3c; }
+        .evaluation { background-color: #3498db; }
+        .incomplet { background-color: #95a5a6; }
+
+        /* Bloc Signature Tracée */
+        .footer-sig { margin-top: 40px; width: 100%; }
+        .sig-table { border: none; width: 100%; }
+        .sig-cell { border: none; width: 33.3%; text-align: center; vertical-align: bottom; }
+        .sig-line { border-top: 1.5pt solid #000; width: 85%; margin: 60px auto 0 auto; }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td style="width: 15%;">
+                {% if logo_path %}<img src="{{ logo_path }}" style="width:70px;">{% endif %}
+            </td>
+            <td style="width: 65%; text-align: center;" class="inst-name">
+                <h1>{{ company.name|upper }}</h1>
+                <p style="font-size: 9pt; margin: 0;">{{ company.sigle }} </p>
+                <p style="font-size: 8pt; margin: 0;">Email:{{ company.email_contact }}</p>
+            </td>
+            <td style="width: 20%; text-align: right; vertical-align: top;">
+                {% if qr_code %}
+                    <img src="data:image/png;base64,{{ qr_code }}" class="qr-code-img">
+                {% endif %}
+                <div style="font-size: 8pt; margin-top: 5px;">Réf: <strong>{{ client.tiers.code }}</strong></div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="fiche-title">DOSSIER SYNTHÉTIQUE DU CLIENT</div>
+
+    <div class="section-header">1. État Civil & Identification</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Nom complet :</td>
+            <td class="value" colspan="3"><strong>{{ client.tiers.nom|upper }} {{ client.tiers.prenoms }}</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Statut Dossier :</td>
+            <td class="value"><span class="status-badge {{ client.statut_dossier|lower }}">{{ client.get_statut_dossier_display }}</span></td>
+            <td class="label">Agent Responsable :</td>
+            <td class="value">{{ client.agent_responsable.tiers.nom|upper }} {{ client.agent_responsable.tiers.prenoms }}</td>
+        </tr>
+    </table>
+
+    <div class="section-header">2. Analyse de l'Activité</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Type d'activité :</td><td class="value">{{ client.get_type_activite_display }}</td>
+            <td class="label">Date d'adhésion :</td><td class="value">{{ client.date_creation|date:"d F Y" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Description :</td>
+            <td class="value" colspan="3">{{ client.description_activite|default:"Non spécifié" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-header">3. Situation Financière & Capacité</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Revenus Mensuels :</td><td class="value finances">{{ client.revenus_mensuels|floatformat:2 }} {{ currency }}</td>
+            <td class="label">Dépenses Mensuelles :</td><td class="value finances">{{ client.depenses_mensuelles|floatformat:2 }} {{ currency }}</td>
+        </tr>
+        <tr>
+            <td class="label">Capacité Remboursement :</td>
+            <td class="value finances" colspan="3" style="font-size: 11pt; color: {% if client.capacite_remboursement > 0 %}#27ae60{% else %}#e74c3c{% endif %};">
+                {{ client.capacite_remboursement|floatformat:2 }} {{ currency }}
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-header">4. État des Engagements</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Montant Prêt Actuel :</td><td class="value finances">{{ client.montant_pret_actuel|floatformat:2 }} {{ currency }}</td>
+            <td class="label">Plafond Autorisé :</td><td class="value finances">{{ client.plafond_pret_max|floatformat:2 }} {{ currency }}</td>
+        </tr>
+    </table>
+
+    <div class="section-header">5. Personne de Référence / Garant</div>
+    <table class="data-table">
+        {% if client.reference_tiers %}
+        <tr>
+            <td class="label">Nom du Garant :</td><td class="value">{{ client.reference_tiers.nom|upper }} {{ client.reference_tiers.prenoms }}</td>
+            <td class="label">Relation :</td><td class="value">{{ client.relation_reference }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align: center; font-style: italic; padding: 10px;">Aucun garant enregistré</td></tr>
+        {% endif %}
+    </table>
+
+    {% if client.statut_dossier == 'BLOQUE' %}
+    <div class="section-header" style="border-left-color: #e74c3c;">6. Motif de Restriction</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Date de blocage :</td><td class="value">{{ client.date_blocage|date:"d/m/Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Raison :</td><td class="value">{{ client.raison_blocage }}</td>
+        </tr>
+    </table>
+    {% endif %}
+
+    <div class="footer-sig">
+        <table class="sig-table">
+            <tr>
+                <td class="sig-cell">
+                    <div style="font-weight: bold;">L'Agent Responsable</div>
+                    <div style="font-size: 8pt; color: #7f8c8d;">{{ client.agent_responsable.tiers.nom|upper }} {{ client.agent_responsable.tiers.prenoms }}</div>
+                    <div class="sig-line"></div>
+                </td>
+                <td class="sig-cell">
+                    <div style="font-weight: bold;">Personne de Référence</div>
+                    <div style="font-size: 8pt; color: #7f8c8d;">{{ client.reference_tiers.nom|upper|default:"---" }} {{ client.reference_tiers.prenoms }}</div>
+                    <div class="sig-line"></div>
+                </td>
+                <td class="sig-cell">
+                    <div style="font-weight: bold;">Le Client</div>
+                    <div style="font-size: 8pt; color: #7f8c8d;">{{ client.tiers.nom|upper }} {{ client.tiers.prenoms }}</div>
+                    <div class="sig-line"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; border-top: 0.5pt solid #ddd; padding-top: 10px; font-size: 8pt; color: #666; text-align: center;">
+        Fiche générée le {{ now|date:"d/m/Y à H:i" }} | Agent : {{ request.user.get_full_name|default:"Système" }}
+    </div>
+</body>
+</html>

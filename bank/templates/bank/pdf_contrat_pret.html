@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+   <style>
+    /* Configuration de la page Letter */
+    @page {
+        size: letter portrait;
+        margin: 0.8in;
+    }
+
+    body {
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.2;
+        color: #000;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* En-tête */
+    .header {
+        text-align: center;
+        margin-bottom: 15px;
+        border-bottom: 1.5pt solid #000;
+        padding-bottom: 8px;
+    }
+    .header h1 {
+        margin: 0;
+        font-size: 18pt;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .header .info-co {
+        font-size: 9pt;
+        margin-top: 3px;
+    }
+
+    /* Titre du document */
+    .title {
+        text-align: center;
+        text-decoration: underline;
+        font-weight: bold;
+        font-size: 13pt;
+        margin: 15px 0;
+        text-transform: uppercase;
+    }
+
+    /* Corps du texte */
+    .content {
+        text-align: justify;
+        line-height: 1.5; /* Passage à 1.5 pour plus d'espace entre les lignes */
+    }
+    .content p {
+        margin: 8px 0; /* Un peu plus d'espace entre les paragraphes */
+    }
+    .field {
+        font-weight: bold;
+        border-bottom: 0.7pt solid #000;
+        padding: 0 3px;
+        display: inline;
+    }
+    .list-item {
+        margin-left: 25px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    /* Date et Lieu */
+    .footer-note {
+        margin-top: 20px;
+        font-style: italic;
+        font-size: 9.5pt;
+        text-align: right;
+    }
+
+    /* ZONE DES SIGNATURES (STYLE IMAGE) */
+    .signature-area {
+        margin-top: 80px; /* Augmente l'espace entre le texte et les signatures */
+        width: 100%;
+        text-align: center;
+        font-size: 0; /* Supprime les espaces blancs entre les inline-blocks */
+    }
+
+    .sig-block {
+        width: 30%; /* Réduit la largeur pour augmenter l'interligne/espace entre les blocs */
+        display: inline-block;
+        text-align: center;
+        vertical-align: top;
+        font-size: 10.5pt; /* Rétablit la taille de police */
+    }
+
+    /* Ligne de pointillés courte et centrée */
+    .dot-line-centered {
+        border-bottom: 1.5pt dotted #000;
+        width: 65%; /* Plus court pour augmenter l'espace entre les lignes de chaque signataire */
+        margin: 0 auto;
+        padding-bottom: 2px;
+        display: block;
+    }
+
+    /* Titre sous les pointillés */
+    .sig-title-centered {
+        display: block;
+        margin-top: 10px; /* Plus d'espace entre les points et le mot (Agent, Client, etc.) */
+        font-weight: bold;
+        font-size: 9.5pt;
+    }
+</style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>{{ entreprise.name|upper }}</h1>
+        <p style="margin: 8px 0; font-size: 11pt;">Prêt No: <strong>{{ pret.code_pret }}</strong></p>
+    </div>
+
+    <div class="title">ENGAGEMENT PARTICULIER</div>
+
+    <div class="content">
+        <p>
+            Je, soussigné (e) <span class="field">{{ tiers.nom.upper }} {{ tiers.prenoms }}</span>
+            Demeurant et domicilié à
+            <span class="field">
+                {% if adresse_principale %}
+                    {{ adresse_principale.rue }}, {{ adresse_principale.ville.nom }}, {{ adresse_principale.departement.nom }}
+                {% else %}
+                    ................................................................................................
+                {% endif %}
+            </span>
+            Identifié au no
+            <span class="field">
+                {% if identite %}
+                    {{ identite.get_type_piece_display }} : {{ identite.numero_document|default:"................" }}
+                {% else %}
+                    ..................................................................
+                {% endif %}
+            </span>
+        </p>
+
+        <p>
+         Personnes à contacter
+            <span class="field">
+                {% if avaliste %}
+                    {{ avaliste.nom.upper }} {{ avaliste.prenoms }}
+                {% else %}
+                    ................................................................................................
+                {% endif %}
+            </span>
+        </p>
+
+        <p>
+            Reconnais avoir emprunté et reçu de la <strong>{{ entreprise.name|upper }}</strong> la somme de
+            <span class="field">{{ pret.montant_accorde }} {{ entreprise.currency.code|default:"GDES" }}</span>.
+        </p>
+
+
+
+        <p>Je m'engage à :</p>
+
+        <div class="list-item">1 - Rembourser ce montant avec des intérêts au taux de <span class="field">{{ pret.taux_interet }}%</span></div>
+
+        <div class="list-item">
+            2 - Effectuer le remboursement du montant total du prêt (C et I) par tranche hebdomadaire de manière égale et consécutive de
+            <span class="field">{{ pret.montant_echeance|floatformat:2 }} {{ entreprise.currency.code|default:"GDES" }}</span>
+            partant du <span class="field">{{ pret.date_premiere_echeance|date:"d/m/Y" }}</span>
+            au <span class="field">{{ pret.date_fin_prevue|date:"d/m/Y" }}</span>.
+        </div>
+
+        <div class="list-item">3 - Payer les pénalités de <span class="field">{{ pret.taux_penalite }}%</span> si le versement ne s'effectue pas à temps prévu en cas de retard.</div>
+        <div class="list-item">4 - Tout changement d'adresse devrait être communiqué à l'agent concerné.</div>
+        <div class="list-item">5 - Donner en garantie mes possessions enregistrées sous mon nom.</div>
+        <div class="list-item">6 - Payer des frais de poursuites et les honoraires d'avocats en cas de non-paiement.</div>
+
+        <p style="margin-top: 10px;">
+            Je reconnais que la juridiction des référés au TPI de Limbe est compétente pour trancher tout conflit en cas de non-paiement de la dette.
+        </p>
+
+        <p>
+            Par la présente, j'engage mes héritiers, mes exécuteurs testamentaires et mes administrateurs successeurs.
+            En cas de mortalité, la <strong>{{ entreprise.name|upper }}</strong> doit figurer parmi mes créanciers privilégiés
+            au même rang que mes dettes de dernière maladie ou funérailles.
+        </p>
+    </div>
+
+ <div class="footer-note">
+        Fait à Limbe, le {{ date_impression|date:"d/m/Y" }}
+    </div>
+
+    <p style="margin-top: 15px;"><strong>Lu et approuvé :</strong></p>
+
+<div class="signature-area">
+    <div class="sig-block">
+        <span class="dot-line-centered">&nbsp;</span>
+        <span class="sig-title-centered">Agent</span>
+    </div>
+
+    <div class="sig-block">
+        <span class="dot-line-centered">&nbsp;</span>
+        <span class="sig-title-centered">Client</span>
+    </div>
+
+    <div class="sig-block">
+        <span class="dot-line-centered">&nbsp;</span>
+        <span class="sig-title-centered">Avaliseur</span>
+    </div>
+</div>
+
+</body>
+</html>
+
+</body>
+</html>

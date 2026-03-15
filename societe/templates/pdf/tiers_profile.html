@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: letter portrait; margin: 0.8cm; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; color: #333; line-height: 1.2; }
+        .header-table { width: 100%; border-bottom: 2pt solid #2c3e50; margin-bottom: 10px; }
+        .inst-name h1 { margin: 0; font-size: 18pt; color: #2c3e50; }
+        .qr-code-img { width: 75px; height: 75px; border: 0.5pt solid #ddd; }
+        .fiche-title { text-align: center; background-color: #2c3e50; color: white; padding: 6px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; }
+        .section-header { background-color: #f2f2f2; border-left: 4pt solid #447e9b; padding: 4px 10px; font-weight: bold; margin-top: 15px; text-transform: uppercase; font-size: 9pt; }
+        .data-table { width: 100%; margin-top: 5px; border-collapse: collapse; }
+        .data-table td { padding: 5px 0; }
+        .label { font-weight: bold; color: #555; width: 150px; }
+        .value { color: #000; border-bottom: 0.5pt solid #ddd; }
+        .photo-profil { border: 1pt solid #ccc; padding: 2px; object-fit: cover; }
+        .doc-img { height: 180px; width: auto; border: 1pt solid #eee; margin-top: 8px; }
+        .no-doc { height: 180px; border: 1pt dashed #ccc; padding-top: 80px; font-size: 8pt; background: #fafafa; text-align: center; }
+        .signature-box { text-align: center; padding: 10px; border-left: 0.5pt solid #eee; }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td style="width: 15%;">
+                {% if logo_path %}<img src="{{ logo_path }}" style="width:70px;">{% endif %}
+            </td>
+            <td style="width: 65%; text-align: center;">
+                <h1>PROJET PRET HAÏTI</h1>
+                <p style="font-size: 9pt; margin: 0;">Système de Gestion des Tiers | Identification Officielle</p>
+            </td>
+            <td style="width: 20%; text-align: right; vertical-align: top;">
+                <img src="data:image/png;base64,{{ qr_code }}" class="qr-code-img">
+                <div style="font-size: 7.5pt; margin-top: 5px;">ID: <strong>{{ obj.code }}</strong></div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="fiche-title">DOSSIER INDIVIDUEL DU TIERS</div>
+
+    <table style="width: 100%;">
+        <tr>
+            <td style="width: 75%; vertical-align: top;">
+                <div class="section-header">État Civil & Naissance</div>
+                <table class="data-table">
+                    <tr><td class="label">Nom complet :</td><td class="value"><strong>{{ obj.nom|upper }} {{ obj.prenoms }}</strong></td></tr>
+                    <tr><td class="label">Sexe :</td><td class="value">{{ obj.get_genre_display }}</td></tr>
+                    <tr><td class="label">Né(e) le :</td><td class="value">{{ obj.date_naissance|date:"d F Y" }}</td></tr>
+                    <tr><td class="label">Statut Matrimonial :</td><td class="value">{{ obj.get_statut_matrimonial_display }}</td></tr>
+                    <tr><td class="label">Religion :</td><td class="value">{{ obj.get_religion_display }}</td></tr>
+                </table>
+            </td>
+            <td style="width: 25%; text-align: right; vertical-align: top;">
+                {% if identity.photo %}
+                    <img src="{{ identity.photo.path }}" class="photo-profil" width="120" height="120">
+                {% else %}
+                    <div class="no-doc" style="width:120px; height:120px; padding-top:50px;">SANS PHOTO</div>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-header">Identification Officielle</div>
+    <table class="data-table">
+        <tr>
+            <td class="label">Type de pièce :</td><td class="value">{{ identity.get_type_piece_display|default:"Non fourni" }}</td>
+            <td class="label" style="padding-left: 20px;">Niveau d'étude :</td><td class="value">{{ obj.get_niveau_etude_display }}</td>
+        </tr>
+    </table>
+
+    <div class="section-header">Validation (Pièces & Signature)</div>
+    <table style="width: 100%; margin-top: 10px; table-layout: fixed;">
+        <tr>
+            <td style="text-align: center;">
+                <span style="font-size: 8pt; font-weight: bold;">RECTO / PAGE PRINCIPALE</span><br>
+                {% if identity.piece_identite_recto %}
+                    <img src="{{ identity.piece_identite_recto.path }}" class="doc-img">
+                {% else %}
+                    <div class="no-doc">Indisponible</div>
+                {% endif %}
+            </td>
+
+            <td style="text-align: center;">
+                {% if identity.type_piece != 'PASSEPORT' %}
+                    <span style="font-size: 8pt; font-weight: bold;">VERSO PIÈCE</span><br>
+                    {% if identity.piece_identite_verso %}
+                        <img src="{{ identity.piece_identite_verso.path }}" class="doc-img">
+                    {% else %}
+                        <div class="no-doc">Indisponible</div>
+                    {% endif %}
+                {% else %}
+                    <div style="padding-top: 80px; color: #999; font-style: italic; font-size: 8pt;">
+                        Passeport :<br>Verso non applicable
+                    </div>
+                {% endif %}
+            </td>
+
+            <td style="vertical-align: top;">
+                <div class="signature-box">
+                    <span style="font-size: 8pt; font-weight: bold;">SIGNATURE</span><br>
+                    {% if identity.signature %}
+                        <img src="{{ identity.signature.path }}" style="max-height: 100px; margin-top: 20px;">
+                    {% else %}
+                        <div style="height: 100px;"></div>
+                    {% endif %}
+                    <p style="margin-top: 10px; font-size: 9pt; color: #888;">___________________</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 40px; border-top: 0.5pt solid #ddd; padding-top: 10px; font-size: 8pt; color: #666;">
+        Fiche générée le {{ now|date:"d/m/Y à H:i" }} | Agent : {{ obj.created_by.get_full_name|default:"Système" }}
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content_upper %}
+<div style="width: 95%; margin: 15px auto; background: #fff; padding: 15px; border: 1px solid #ccc; border-radius: 4px;">
+    <h2 style="margin-top: 0; color: #666; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <i class="fas fa-chart-bar"></i> Répartition des dossiers par Agent Responsable
+    </h2>
+    <div style="height: 250px;">
+        <canvas id="agentChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('agentChart').getContext('2d');
+        
+        // Récupération des données envoyées par l'Admin (via json.dumps)
+        const rawData = {{ chart_data|safe }};
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: rawData.labels,
+                datasets: [{
+                    label: 'Nombre de clients',
+                    data: rawData.data,
+                    backgroundColor: 'rgba(65, 118, 144, 0.7)', // Couleur bleu Django Admin
+                    borderColor: 'rgba(65, 118, 144, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1, // Pour ne pas avoir de demi-dossiers (ex: 1.5)
+                            color: '#666'
+                        },
+                        grid: { color: '#eee' }
+                    },
+                    x: {
+                        ticks: { color: '#666' },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        padding: 10
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
