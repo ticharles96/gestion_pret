@@ -37,7 +37,7 @@ class Company(models.Model):
     ]
     # --- Identité Visuelle ---
     name = models.CharField(_("Nom de l'entreprise"), validators=[MinLengthValidator(3)], max_length=255)
-    sigle = models.CharField(_("Sigle de l'entreprise"), validators=[MinLengthValidator(3)])
+    sigle = models.CharField(_("Sigle de l'entreprise") , validators=[MinLengthValidator(3)], max_length=20)
     logo = models.ImageField(_("Logo Officiel"), upload_to='company/logos/')
     slogan = models.CharField(_("Slogan"), validators=[MinLengthValidator(3)], max_length=255, blank=True, null=True)
 
