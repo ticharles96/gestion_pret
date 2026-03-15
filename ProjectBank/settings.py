@@ -126,20 +126,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_ROOT = '/var/www/gestion_pret/static/'
-STATIC_URL = 'static/'
+import os
 
-# Assurez-vous que Django sait où chercher votre dossier static à la racine
+# --- FICHIERS STATIQUES ---
 
+# 1. URL pour le navigateur (obligatoirement avec un / au début)
+STATIC_URL = '/static/'
+
+# 2. Dossier de SOURCE (Là où vous mettez vos fichiers CSS/JS personnalisés)
+# Assurez-vous que ce dossier existe : /var/www/gestion_pret/static/
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# 3. Dossier de DESTINATION (Là où Django va TOUT rassembler pour Apache)
+# On change le nom en 'staticfiles' pour éviter le conflit avec le dossier ci-dessus
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Dossier où les fichiers seront réellement stockés sur le disque
+
+# --- FICHIERS MÉDIAS (Uploads) ---
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# URL pour accéder à ces fichiers dans le navigateur
 MEDIA_URL = '/media/'
 
 # pour choisi couleur theme
