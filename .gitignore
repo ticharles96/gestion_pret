@@ -1,0 +1,25 @@
+# Environnement virtuel
+.venv/
+venv/
+env/
+
+# Fichiers compilés Python (À IGNORER ABSOLUMENT)
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de données locale (si vous utilisez SQLite en local)
+db.sqlite3
+
+# Fichiers statiques et médias collectés
+staticfiles/
+media/
+
+# Configuration IDE
+.idea/
+.vscode/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
