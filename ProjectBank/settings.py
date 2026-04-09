@@ -99,7 +99,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jandjsevisfinans',
-        'USER': 'root',
+        'USER': 'jandj_admin',
         'PASSWORD': 'JandJ2026',
         'HOST': '127.0.0.1',
         'PORT': '3306',
