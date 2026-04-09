@@ -52,14 +52,14 @@ class Company(models.Model):
 
     default_interest_rate = models.DecimalField(
         "Taux d'intérêt Pret (%)",
-        max_digits=10,
+        max_digits=20,
         decimal_places=2,
         default=5.00,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
     interet_maison_daffaire = models.DecimalField(
         "Taux d'intérêt Maison d'affaire(%)",
-        max_digits=10,
+        max_digits=20,
         decimal_places=2,
         default=5.00,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
@@ -67,7 +67,7 @@ class Company(models.Model):
 
     # --- Frais de Retard Libres ---
     late_fee_value = models.DecimalField(
-        max_digits=15,
+        max_digits=20,
         decimal_places=2,
         default=0.00,
         verbose_name="Frais de Retard"
@@ -81,13 +81,13 @@ class Company(models.Model):
         default='SARL'
     )
     capital = models.DecimalField(
-        max_digits=15,
+        max_digits=20,
         decimal_places=2,
         default=0.00,
         verbose_name="Capital Social"
     )
     frais_dossier_pct = models.DecimalField(
-        max_digits=5,
+        max_digits=20,
         decimal_places=2,
         default=0.00,
         verbose_name="Frais de dossier (%)",

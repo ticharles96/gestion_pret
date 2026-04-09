@@ -26,13 +26,13 @@ class Client(models.Model):
     statut_dossier = models.CharField(max_length=15, choices=STATUT_DOSSIER, default='INCOMPLET')
     agent_responsable = models.ForeignKey('societe.Employe', on_delete=models.PROTECT, null=True, blank=True)
 
-    montant_pret_actuel = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    plafond_pret_max = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    montant_pret_actuel = models.DecimalField(max_digits=30, decimal_places=2, default=0)
+    plafond_pret_max = models.DecimalField(max_digits=30, decimal_places=2, default=0)
     date_dernier_pret = models.DateField(null=True, blank=True)
 
     # Finances
-    revenus_mensuels = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    depenses_mensuelles = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    revenus_mensuels = models.DecimalField(max_digits=30, decimal_places=2, default=0)
+    depenses_mensuelles = models.DecimalField(max_digits=30, decimal_places=2, default=0)
 
     # Traçabilité
     date_creation = models.DateTimeField(auto_now_add=True)
@@ -89,15 +89,15 @@ class Pret(models.Model):
         unique=True,
         verbose_name="N° Prêt"
     )
-    montant_accorde = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Montant")
-    taux_interet = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    taux_penalite = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    montant_accorde = models.DecimalField(max_digits=30, decimal_places=2, default=0, verbose_name="Montant")
+    taux_interet = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    taux_penalite = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     frequence_paiement = models.CharField(max_length=10, choices=CHOIX_FREQUENCE, default='SEMAINE')
     jour_remboursement = models.IntegerField(choices=CHOIX_JOURS, default=0)
     duree = models.IntegerField(default=1)
     date_pret = models.DateField(auto_now_add=True)
     is_solde = models.BooleanField(default=False)
-    frais_dossier_pct = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    frais_dossier_pct = models.DecimalField(max_digits=30, decimal_places=2, null=True, blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
     cree_par = models.ForeignKey(User, on_delete=models.PROTECT, null=True, related_name='prets_crees', editable=False)
@@ -259,11 +259,11 @@ class Pret(models.Model):
 class Paiement(models.Model):
     pret = models.ForeignKey(Pret, on_delete=models.PROTECT, related_name='paiements')
     date_paiement = models.DateTimeField(default=timezone.now)
-    montant_paye = models.DecimalField(max_digits=12, decimal_places=2)
+    montant_paye = models.DecimalField(max_digits=30, decimal_places=2)
     mode_paiement = models.CharField(max_length=50, choices=[('CASH', 'Espèces'), ('MOBILE', 'Mobile paiement')],
                                      default='CASH')
     penalite_payee = models.DecimalField(
-        max_digits=12,
+        max_digits=30,
         decimal_places=2,
         default=0,
         verbose_name="Pénalité Versée"

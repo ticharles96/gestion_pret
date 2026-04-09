@@ -23,13 +23,14 @@ urlpatterns = [
 # Ajout de la route pour le contrat PDF
     path('admin/bank/pret/<int:pret_id>/pdf/', imprimer_contrat_pret, name='imprimer_contrat_pret'),
 
-    # 3. L'administration principale
-    path('admin/', admin.site.urls),
+
 
     # 4. Les extensions (Select2, Chaining, etc.)
     path('chaining/', include('smart_selects.urls')),
     path('select2/', include('django_select2.urls')),
     path('tiers/<int:pk>/pdf/', views.tiers_pdf_view, name='profil_pdf'),
+    # 3. L'administration principale
+    path('', admin.site.urls),
     ]
 
 # 5. SUPPORT MÉDIA (Pour le Logo)

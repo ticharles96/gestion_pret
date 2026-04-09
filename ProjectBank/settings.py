@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-h_iw0awgqo%%%gn!8_*oene-nnh=78(bt$5#%t)!xt&@xk0_r@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['jandjsevisfinans.com', 'www.jandjsevisfinans.com', '84.247.176.244', '127.0.0.1']
+
 
 
 # Application definition
@@ -87,12 +89,29 @@ WSGI_APPLICATION = 'ProjectBank.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jandjsevisfinans',
+        'USER': 'root',
+        'PASSWORD': 'JandJ2026',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+        'charset': 'utf8mb4',
+        # On retire innodb_default_row_format d'ici car c'est une variable GLOBAL
+        'init_command': "SET default_storage_engine=InnoDB",
+},
     }
 }
+
+
 
 
 # Password validation
