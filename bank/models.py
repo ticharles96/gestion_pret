@@ -224,9 +224,10 @@ class Pret(models.Model):
         if self.is_solde or self.taux_penalite <= 0 or not self.date_premiere_echeance:
             return Decimal('0.00')
 
-        date_aujourdhui = timezone.now().date()
+        #date_aujourdhui = timezone.now().date()
         #date_aujourdhui = date(2026, 3, 17)
-
+        # Modifiez cette ligne dans votre fonction :
+        date_aujourdhui = timezone.localtime(timezone.now()).date()
         penalite_totale = Decimal('0.00')
         taux = self.taux_penalite / Decimal('100')
         m_ech = self.montant_echeance
