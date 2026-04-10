@@ -70,7 +70,7 @@ class Departement(models.Model):
 
 class Ville(models.Model):
     departement = models.ForeignKey(Departement, on_delete=models.CASCADE)
-    nom = models.CharField(max_length=100)
+    nom = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
